@@ -26,6 +26,20 @@
   --text-muted: #44445A;
 }
 
+/* ── Light Theme ─────────────────────────────────────────── */
+[data-theme="light"] {
+  --ink: #FFFFFF;
+  --surface: #F8F9FA;
+  --card: #F0F1F5;
+  --border: #E0E2ED;
+  --accent: #00BFA5;
+  --accent-purple: #7C3AED;
+  --accent-orange: #EA580C;
+  --text-primary: #1A1A2E;
+  --text-secondary: #6B6B8C;
+  --text-muted: #B0B0C8;
+}
+
 /* ── Base Reset ──────────────────────────────────────────── */
 *, *::before, *::after {
   box-sizing: border-box;
@@ -36,6 +50,7 @@ html {
   /* Custom scrollbar */
   scrollbar-width: thin;
   scrollbar-color: var(--accent) var(--surface);
+  transition: scrollbar-color 0.3s ease;
 }
 
 html::-webkit-scrollbar { width: 5px; }
@@ -53,6 +68,11 @@ body {
   /* Subtle dot grid background */
   background-image: radial-gradient(rgba(0, 255, 194, 0.08) 1px, transparent 1px);
   background-size: 40px 40px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+[data-theme="light"] body {
+  background-image: radial-gradient(rgba(0, 191, 165, 0.06) 1px, transparent 1px);
 }
 
 /* ── Custom Selection Color ──────────────────────────────── */

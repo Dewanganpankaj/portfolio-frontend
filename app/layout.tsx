@@ -4,8 +4,10 @@
 // ============================================================
 
 import type { Metadata } from "next";
+// @ts-ignore
 import "./globals.css";
 import { personalInfo } from "@/portfolio.config";
+import { ThemeProvider } from "@/lib/ThemeProvider";
 
 // ── SEO Metadata ──────────────────────────────────────────
 export const metadata: Metadata = {
@@ -37,9 +39,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="scroll-smooth">
+    <html lang="en" className="scroll-smooth" suppressHydrationWarning>
       <body className="antialiased">
-        {children}
+        <ThemeProvider>
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );

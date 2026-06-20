@@ -1,258 +1,21 @@
-// // ============================================================
-// // components/ContactSection.tsx  (UPDATED — connects to FastAPI)
-// //
-// // Changes from previous version:
-// //   • Form submit calls submitContact() from lib/api.ts
-// //   • Shows loading spinner during API call
-// //   • Shows success / error message from backend response
-// // ============================================================
-
-// "use client";
-
-// import { useEffect, useRef, useState } from "react";
-// import { Github, Linkedin, Mail, Send, MessageSquareQuote, Loader2 } from "lucide-react";
-// import { personalInfo } from "@/portfolio.config";
-// import { submitContact } from "@/lib/api";  // ← backend call
-
-// export default function ContactSection() {
-//   const ref = useRef<HTMLDivElement>(null);
-//   const [visible, setVisible] = useState(false);
-
-//   // Form state
-//   const [form, setForm] = useState({ name: "", email: "", subject: "", message: "" });
-//   const [loading, setLoading] = useState(false);
-//   const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
-//   const [statusMessage, setStatusMessage] = useState("");
-
-//   useEffect(() => {
-//     const obs = new IntersectionObserver(
-//       ([entry]) => { if (entry.isIntersecting) setVisible(true); },
-//       { threshold: 0.1 }
-//     );
-//     if (ref.current) obs.observe(ref.current);
-//     return () => obs.disconnect();
-//   }, []);
-
-//   // ── Submit handler — calls FastAPI backend ────────────────
-//   const handleSend = async () => {
-//     if (!form.name || !form.email || !form.message) {
-//       setStatus("error");
-//       setStatusMessage("Please fill in all required fields.");
-//       return;
-//     }
-
-//     setLoading(true);
-//     setStatus("idle");
-
-//     try {
-//       const result = await submitContact({
-//         name: form.name,
-//         email: form.email,
-//         subject: form.subject || undefined,
-//         message: form.message,
-//       });
-
-//       // Backend returned success
-//       setStatus("success");
-//       setStatusMessage(result.message);
-//       setForm({ name: "", email: "", subject: "", message: "" });
-
-//       // Reset status badge after 5 seconds
-//       setTimeout(() => setStatus("idle"), 5000);
-//     } catch (err) {
-//       setStatus("error");
-//       setStatusMessage(
-//         err instanceof Error ? err.message : "Something went wrong. Please try again."
-//       );
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   return (
-//     <section id="contact" className="py-24 relative">
-//       <div
-//         ref={ref}
-//         className={`max-w-5xl mx-auto px-6 transition-all duration-700 ${
-//           visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
-//         }`}
-//       >
-//         {/* Section header */}
-//         <div className="flex items-center gap-4 mb-4">
-//           <span className="font-mono text-[#00FFC2] text-sm">05.</span>
-//           <h2 className="font-display text-5xl tracking-widest text-[#F0F0F5]">CONTACT</h2>
-//           <div className="flex-1 h-px bg-gradient-to-r from-[#1E1E2E] to-transparent" />
-//         </div>
-//         <p className="font-mono text-[#44445A] text-xs tracking-widest mb-16">
-//           // LET&apos;S CONNECT
-//         </p>
-
-//         <div className="grid md:grid-cols-2 gap-12">
-//           {/* Left: info + social links */}
-//           <div>
-//             <h3 className="font-display text-4xl tracking-wider text-[#F0F0F5] mb-4">GET IN TOUCH</h3>
-//             <p className="text-[#8888A8] font-body text-base leading-relaxed mb-8">
-//               Whether you have a project idea, a job opportunity, or just want to talk tech —
-//               my inbox is always open. I&apos;ll get back to you within 24 hours.
-//             </p>
-
-//             <div className="space-y-3">
-//               <a href={personalInfo.github} target="_blank" rel="noopener noreferrer"
-//                 className="flex items-center gap-4 p-4 glass-card border border-[#1E1E2E] rounded-xl hover:border-[#9B5DE5] hover:shadow-[0_0_20px_rgba(155,93,229,0.1)] transition-all group">
-//                 <Github size={20} className="text-[#9B5DE5]" />
-//                 <div>
-//                   <div className="font-mono text-sm text-[#F0F0F5]">GitHub</div>
-//                   <div className="font-mono text-xs text-[#44445A] group-hover:text-[#9B5DE5] transition-colors">
-//                     {personalInfo.github.replace("https://", "")}
-//                   </div>
-//                 </div>
-//                 <span className="ml-auto text-[#44445A] group-hover:text-[#9B5DE5] text-xs font-mono">↗</span>
-//               </a>
-
-//               <a href={personalInfo.linkedin} target="_blank" rel="noopener noreferrer"
-//                 className="flex items-center gap-4 p-4 glass-card border border-[#1E1E2E] rounded-xl hover:border-[#4CC9F0] hover:shadow-[0_0_20px_rgba(76,201,240,0.1)] transition-all group">
-//                 <Linkedin size={20} className="text-[#4CC9F0]" />
-//                 <div>
-//                   <div className="font-mono text-sm text-[#F0F0F5]">LinkedIn</div>
-//                   <div className="font-mono text-xs text-[#44445A] group-hover:text-[#4CC9F0] transition-colors">
-//                     {personalInfo.linkedin.replace("https://", "")}
-//                   </div>
-//                 </div>
-//                 <span className="ml-auto text-[#44445A] group-hover:text-[#4CC9F0] text-xs font-mono">↗</span>
-//               </a>
-
-//               <a href={`mailto:${personalInfo.email}`}
-//                 className="flex items-center gap-4 p-4 glass-card border border-[#1E1E2E] rounded-xl hover:border-[#00FFC2] hover:shadow-[0_0_20px_rgba(0,255,194,0.1)] transition-all group">
-//                 <Mail size={20} className="text-[#00FFC2]" />
-//                 <div>
-//                   <div className="font-mono text-sm text-[#F0F0F5]">Email</div>
-//                   <div className="font-mono text-xs text-[#44445A] group-hover:text-[#00FFC2] transition-colors">
-//                     {personalInfo.email}
-//                   </div>
-//                 </div>
-//                 <span className="ml-auto text-[#44445A] group-hover:text-[#00FFC2] text-xs font-mono">↗</span>
-//               </a>
-//             </div>
-//           </div>
-
-//           {/* Right: contact form */}
-//           <div className="glass-card border border-[#1E1E2E] rounded-xl p-6">
-//             <h4 className="font-display text-2xl tracking-wider text-[#F0F0F5] mb-6">SEND A MESSAGE</h4>
-
-//             {/* Status banner */}
-//             {status !== "idle" && (
-//               <div className={`mb-4 p-3 rounded-lg font-mono text-sm border ${
-//                 status === "success"
-//                   ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-400"
-//                   : "bg-red-500/10 border-red-500/30 text-red-400"
-//               }`}>
-//                 {statusMessage}
-//               </div>
-//             )}
-
-//             <div className="space-y-4">
-//               <input
-//                 className="w-full bg-[#1E1E2E] border border-[#1E1E2E] focus:border-[#00FFC2] rounded-lg px-4 py-3 font-mono text-sm text-[#F0F0F5] outline-none transition-colors placeholder:text-[#44445A]"
-//                 placeholder="Your Name *"
-//                 value={form.name}
-//                 onChange={(e) => setForm({ ...form, name: e.target.value })}
-//                 disabled={loading}
-//               />
-//               <input
-//                 className="w-full bg-[#1E1E2E] border border-[#1E1E2E] focus:border-[#00FFC2] rounded-lg px-4 py-3 font-mono text-sm text-[#F0F0F5] outline-none transition-colors placeholder:text-[#44445A]"
-//                 placeholder="Your Email *"
-//                 type="email"
-//                 value={form.email}
-//                 onChange={(e) => setForm({ ...form, email: e.target.value })}
-//                 disabled={loading}
-//               />
-//               <input
-//                 className="w-full bg-[#1E1E2E] border border-[#1E1E2E] focus:border-[#00FFC2] rounded-lg px-4 py-3 font-mono text-sm text-[#F0F0F5] outline-none transition-colors placeholder:text-[#44445A]"
-//                 placeholder="Subject (optional)"
-//                 value={form.subject}
-//                 onChange={(e) => setForm({ ...form, subject: e.target.value })}
-//                 disabled={loading}
-//               />
-//               <textarea
-//                 className="w-full bg-[#1E1E2E] border border-[#1E1E2E] focus:border-[#00FFC2] rounded-lg px-4 py-3 font-mono text-sm text-[#F0F0F5] outline-none transition-colors resize-none h-32 placeholder:text-[#44445A]"
-//                 placeholder="Your message... *"
-//                 value={form.message}
-//                 onChange={(e) => setForm({ ...form, message: e.target.value })}
-//                 disabled={loading}
-//               />
-//               <button
-//                 onClick={handleSend}
-//                 disabled={loading}
-//                 className={`w-full flex items-center justify-center gap-2 py-3 font-mono font-bold text-sm rounded-lg transition-all duration-200 ${
-//                   loading
-//                     ? "bg-[#00FFC2]/50 text-[#0A0A0F]/70 cursor-not-allowed"
-//                     : status === "success"
-//                     ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
-//                     : "bg-[#00FFC2] text-[#0A0A0F] hover:shadow-[0_0_30px_rgba(0,255,194,0.4)]"
-//                 }`}
-//               >
-//                 {loading ? (
-//                   <><Loader2 size={14} className="animate-spin" /> Sending...</>
-//                 ) : status === "success" ? (
-//                   "✓ Message sent!"
-//                 ) : (
-//                   <><Send size={14} /> Send Message</>
-//                 )}
-//               </button>
-//             </div>
-//           </div>
-//         </div>
-//       </div>
-
-//       {/* Developer Message Card */}
-//       <div className="max-w-4xl mx-auto px-6 mt-24">
-//         <div className="relative glass-card border border-[#9B5DE5]/30 rounded-2xl p-8 overflow-hidden">
-//           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#00FFC2] via-[#9B5DE5] to-[#FF6B35]" />
-//           <div className="absolute -top-20 -right-20 w-40 h-40 rounded-full bg-[#9B5DE5]/10 blur-3xl" />
-
-//           <div className="flex items-center gap-3 mb-5">
-//             <div className="w-10 h-10 rounded-full bg-[#9B5DE5]/20 border border-[#9B5DE5]/30 flex items-center justify-center">
-//               <MessageSquareQuote size={18} className="text-[#9B5DE5]" />
-//             </div>
-//             <div>
-//               <div className="font-display text-xl tracking-widest text-[#F0F0F5]">
-//                 A NOTE FROM THE DEVELOPER
-//               </div>
-//               <div className="font-mono text-xs text-[#44445A]">// personal.message</div>
-//             </div>
-//           </div>
-
-//           <p className="font-body text-[#8888A8] leading-relaxed text-base whitespace-pre-line">
-//             {personalInfo.developerMessage}
-//           </p>
-
-//           <div className="mt-6 pt-6 border-t border-[#1E1E2E] flex items-center gap-3">
-//             <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#00FFC2] to-[#9B5DE5] flex items-center justify-center font-display text-sm text-[#0A0A0F]">
-//               {personalInfo.name.charAt(0)}
-//             </div>
-//             <div>
-//               <div className="font-mono text-sm text-[#F0F0F5]">{personalInfo.name}</div>
-//               <div className="font-mono text-xs text-[#44445A]">{personalInfo.location}</div>
-//             </div>
-//           </div>
-//         </div>
-//       </div>
-//     </section>
-//   );
-// }
-"use client";
-
 // ============================================================
 // components/ContactSection.tsx
 // Contact form — calls FastAPI backend to save message + send email
 // ============================================================
+"use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Github, Linkedin, Mail, Send, MessageSquareQuote, Loader2 } from "lucide-react";
+import {
+  Github,
+  Linkedin,
+  Mail,
+  Send,
+  MessageSquareQuote,
+  Loader2,
+} from "lucide-react";
 import { personalInfo } from "@/portfolio.config";
 
-// ── Inline API call — no separate import needed ───────────────
-// This avoids any import path issues completely.
+// ── Inline API call — with better error handling ───────────────
 async function submitContactForm(data: {
   name: string;
   email: string;
@@ -260,19 +23,48 @@ async function submitContactForm(data: {
   message: string;
 }) {
   const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api";
+  
+  console.log("📤 Sending contact form to:", `${BASE_URL}/contact/`);
+  console.log("📋 Payload:", data);
 
-  const res = await fetch(`${BASE_URL}/contact/`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data),
-  });
+  try {
+    const res = await fetch(`${BASE_URL}/contact/`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
 
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.detail || err.error || `Error ${res.status}`);
+    console.log("📊 Response status:", res.status);
+
+    if (!res.ok) {
+      let err: any = {};
+      try {
+        err = await res.json();
+      } catch (e) {
+        console.error("Failed to parse error response:", e);
+      }
+      
+      const errorMsg = err.detail || err.error || err.message || `Error ${res.status}`;
+      console.error("❌ Backend error:", errorMsg);
+      throw new Error(errorMsg);
+    }
+
+    const result = await res.json();
+    console.log("✅ Success response:", result);
+    return result;
+  } catch (error) {
+    console.error("🔥 Fetch error:", error);
+    
+    // Provide helpful error message based on the error type
+    if (error instanceof TypeError && error.message.includes("fetch")) {
+      throw new Error(
+        "Cannot connect to backend. Make sure the backend server is running at " +
+        `${BASE_URL}. Start it with: python -m uvicorn app.main:app --reload`
+      );
+    }
+    
+    throw error;
   }
-
-  return res.json();
 }
 
 export default function ContactSection() {
@@ -300,15 +92,22 @@ export default function ContactSection() {
       return;
     }
 
+    // Validate message length
+    if (form.message.trim().length < 10) {
+      setStatus("error");
+      setStatusMessage("Message must be at least 10 characters long.");
+      return;
+    }
+
     setLoading(true);
     setStatus("idle");
 
     try {
       const result = await submitContactForm({
-        name: form.name,
-        email: form.email,
-        subject: form.subject || undefined,
-        message: form.message,
+        name: form.name.trim(),
+        email: form.email.trim(),
+        subject: form.subject?.trim() || undefined,
+        message: form.message.trim(),
       });
 
       setStatus("success");
@@ -317,9 +116,9 @@ export default function ContactSection() {
       setTimeout(() => setStatus("idle"), 5000);
     } catch (err) {
       setStatus("error");
-      setStatusMessage(
-        err instanceof Error ? err.message : "Something went wrong. Please try again."
-      );
+      const errorMsg = err instanceof Error ? err.message : "Something went wrong. Please try again.";
+      setStatusMessage(errorMsg);
+      console.error("Contact form error:", errorMsg);
     } finally {
       setLoading(false);
     }
@@ -353,13 +152,8 @@ export default function ContactSection() {
             </p>
 
             <div className="space-y-3">
-              {/* GitHub */}
-              <a
-                href={personalInfo.github}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-4 p-4 glass-card border border-[#1E1E2E] rounded-xl hover:border-[#9B5DE5] transition-all group"
-              >
+              <a href={personalInfo.github} target="_blank" rel="noopener noreferrer"
+                className="flex items-center gap-4 p-4 glass-card border border-[#1E1E2E] rounded-xl hover:border-[#9B5DE5] hover:shadow-[0_0_20px_rgba(155,93,229,0.1)] transition-all group">
                 <Github size={20} className="text-[#9B5DE5]" />
                 <div>
                   <div className="font-mono text-sm text-[#F0F0F5]">GitHub</div>
@@ -370,13 +164,8 @@ export default function ContactSection() {
                 <span className="ml-auto text-[#44445A] group-hover:text-[#9B5DE5] text-xs font-mono">↗</span>
               </a>
 
-              {/* LinkedIn */}
-              <a
-                href={personalInfo.linkedin}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-4 p-4 glass-card border border-[#1E1E2E] rounded-xl hover:border-[#4CC9F0] transition-all group"
-              >
+              <a href={personalInfo.linkedin} target="_blank" rel="noopener noreferrer"
+                className="flex items-center gap-4 p-4 glass-card border border-[#1E1E2E] rounded-xl hover:border-[#4CC9F0] hover:shadow-[0_0_20px_rgba(76,201,240,0.1)] transition-all group">
                 <Linkedin size={20} className="text-[#4CC9F0]" />
                 <div>
                   <div className="font-mono text-sm text-[#F0F0F5]">LinkedIn</div>
@@ -387,11 +176,8 @@ export default function ContactSection() {
                 <span className="ml-auto text-[#44445A] group-hover:text-[#4CC9F0] text-xs font-mono">↗</span>
               </a>
 
-              {/* Email */}
-              <a
-                href={`mailto:${personalInfo.email}`}
-                className="flex items-center gap-4 p-4 glass-card border border-[#1E1E2E] rounded-xl hover:border-[#00FFC2] transition-all group"
-              >
+              <a href={`mailto:${personalInfo.email}`}
+                className="flex items-center gap-4 p-4 glass-card border border-[#1E1E2E] rounded-xl hover:border-[#00FFC2] hover:shadow-[0_0_20px_rgba(0,255,194,0.1)] transition-all group">
                 <Mail size={20} className="text-[#00FFC2]" />
                 <div>
                   <div className="font-mono text-sm text-[#F0F0F5]">Email</div>
@@ -444,7 +230,7 @@ export default function ContactSection() {
               />
               <textarea
                 className="w-full bg-[#1E1E2E] border border-[#1E1E2E] focus:border-[#00FFC2] rounded-lg px-4 py-3 font-mono text-sm text-[#F0F0F5] outline-none transition-colors resize-none h-32 placeholder:text-[#44445A]"
-                placeholder="Your message... *"
+                placeholder="Your message... * (min 10 characters)"
                 value={form.message}
                 onChange={(e) => setForm({ ...form, message: e.target.value })}
                 disabled={loading}
@@ -473,22 +259,28 @@ export default function ContactSection() {
         </div>
       </div>
 
-      {/* Developer Message */}
+      {/* Developer Message Card */}
       <div className="max-w-4xl mx-auto px-6 mt-24">
         <div className="relative glass-card border border-[#9B5DE5]/30 rounded-2xl p-8 overflow-hidden">
           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#00FFC2] via-[#9B5DE5] to-[#FF6B35]" />
+          <div className="absolute -top-20 -right-20 w-40 h-40 rounded-full bg-[#9B5DE5]/10 blur-3xl" />
+
           <div className="flex items-center gap-3 mb-5">
             <div className="w-10 h-10 rounded-full bg-[#9B5DE5]/20 border border-[#9B5DE5]/30 flex items-center justify-center">
               <MessageSquareQuote size={18} className="text-[#9B5DE5]" />
             </div>
             <div>
-              <div className="font-display text-xl tracking-widest text-[#F0F0F5]">A NOTE FROM THE DEVELOPER</div>
+              <div className="font-display text-xl tracking-widest text-[#F0F0F5]">
+                A NOTE FROM THE DEVELOPER
+              </div>
               <div className="font-mono text-xs text-[#44445A]">// personal.message</div>
             </div>
           </div>
+
           <p className="font-body text-[#8888A8] leading-relaxed text-base whitespace-pre-line">
             {personalInfo.developerMessage}
           </p>
+
           <div className="mt-6 pt-6 border-t border-[#1E1E2E] flex items-center gap-3">
             <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#00FFC2] to-[#9B5DE5] flex items-center justify-center font-display text-sm text-[#0A0A0F]">
               {personalInfo.name.charAt(0)}

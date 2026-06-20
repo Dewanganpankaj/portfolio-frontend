@@ -163,11 +163,22 @@ export const projects: Project[] = [
     category: "java",
     featured: false,
   },
+  {
+  id: "NextCar India - Car Rental Platform",
+  title: "NextCar India - Car Rental Platform",
+  description:
+  "Developed a full-stack car rental platform enabling vehicle listing, booking, availability management, and customer reservations. Built RESTful APIs using Spring Boot and integrated a responsive frontend with React and Next.js to deliver a seamless user experience. Implemented secure authentication, role-based access control, and efficient vehicle scheduling workflows.",
+  techStack: ["Java", "Spring Boot", "React", "Next.js", "MySQL"],
+  githubUrl: "https://github.com/Dewanganpankaj/NextCar_Project",
+  category: "java",
+  featured: true,
+  }
+
 ];
 
 // ── Stats shown in the hero ────────────────────────────────
 export const stats = [
-  { label: "Years Experience", value: "1.7+" },
-  { label: "Projects Shipped", value: "4+" },
+  { label: "Years Experience", value: "2+" },
+  { label: "Projects Shipped", value: "5+" },
   { label: "LLM Integrations", value: "15+" },
 ];

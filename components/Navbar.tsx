@@ -8,6 +8,7 @@
 import { useState, useEffect } from "react";
 import { Menu, X, Code2 } from "lucide-react";
 import { personalInfo } from "@/portfolio.config";
+import ThemeToggle from "./ThemeToggle";
 
 // Navigation links — each anchor maps to a section id on the page
 const NAV_LINKS = [
@@ -77,24 +78,30 @@ export default function Navbar() {
           ))}
         </ul>
 
-        {/* ── CTA Button (desktop) ──────────────────────── */}
-        <a
-          href={personalInfo.github}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="hidden md:flex items-center gap-2 px-4 py-2 border border-[#00FFC2] text-[#00FFC2] font-mono text-sm rounded-md hover:bg-[#00FFC2] hover:text-[#0A0A0F] transition-all duration-200"
-        >
-          GitHub ↗
-        </a>
+        {/* ── Desktop Actions ───────────────────────────── */}
+        <div className="hidden md:flex items-center gap-4">
+          <ThemeToggle />
+          <a
+            href={personalInfo.github}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 px-4 py-2 border border-[#00FFC2] text-[#00FFC2] font-mono text-sm rounded-md hover:bg-[#00FFC2] hover:text-[#0A0A0F] transition-all duration-200"
+          >
+            GitHub ↗
+          </a>
+        </div>
 
         {/* ── Mobile Menu Toggle ────────────────────────── */}
-        <button
-          className="md:hidden text-[#8888A8] hover:text-[#00FFC2]"
-          onClick={() => setMenuOpen(!menuOpen)}
-          aria-label="Toggle menu"
-        >
-          {menuOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
+        <div className="md:hidden flex items-center gap-2">
+          <ThemeToggle />
+          <button
+            className="text-[#8888A8] hover:text-[#00FFC2]"
+            onClick={() => setMenuOpen(!menuOpen)}
+            aria-label="Toggle menu"
+          >
+            {menuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
       </div>
 
       {/* ── Mobile Dropdown Menu ──────────────────────────── */}
